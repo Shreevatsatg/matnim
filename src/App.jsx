@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import TextForm from './components/TextForm';
+import VideoPlayer from './components/VideoPlayer';
+import { createAnimation } from './services/animationService';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [loading, setLoading] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (text) => {
+    setLoading(true);
+    setError('');
+    setVideoUrl('');
+
+    try {
+      const result = await createAnimation(text);
+      setVideoUrl(result.videoUrl);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error creating animation:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="max-w-3xl mx-auto p-8 text-center">
+      <h1 className="text-3xl font-bold mb-2">Manim Text Animator</h1>
+      <p className="text-gray-300 mb-6">Enter text to create an animated video</p>
+      
+      <TextForm onSubmit={handleSubmit} isLoading={loading} />
+
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+
+      {loading && <div className="text-gray-400 italic mb-8">Creating your animation...</div>}
+
+      <VideoPlayer videoUrl={videoUrl} />
+    </div>
+  );
 }
 
-export default App
+export default App;
