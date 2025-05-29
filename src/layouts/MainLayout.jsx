@@ -9,17 +9,11 @@ const MainLayout = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0">
-                <span className="text-2xl font-bold text-indigo-500">Visualixir</span>
+                <span className="text-2xl font-bold text-indigo-500 hover:text-3xl">Visualixir</span>
               </Link>
             </div>
             <div className="flex">
               <div className="ml-10 flex items-baseline space-x-4">
-                <Link 
-                  to="/" 
-                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 hover:text-white"
-                >
-                  Home
-                </Link>
                 <Link 
                   to="/create" 
                   className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 hover:text-white"
