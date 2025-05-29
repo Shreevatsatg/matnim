@@ -1,9 +1,9 @@
-import { Link, Outlet } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const MainLayout = () => {
+export default function Navbar() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white w-full">
-      {/* Navigation Bar */}
+    
       <nav className="bg-gray-800 shadow-md w-full">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -37,24 +37,5 @@ const MainLayout = () => {
           </div>
         </div>
       </nav>
-
-      {/* Main Content */}
-      <main className="w-full py-6">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Outlet />
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 mt-auto w-full">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-gray-400 text-sm">
-            © {new Date().getFullYear()} Visualixir - Create beautiful animations
-          </p>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default MainLayout;
+      )
+    }

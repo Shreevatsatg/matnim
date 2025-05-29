@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Layouts
-import MainLayout from './layouts/MainLayout';
+import Footer from './layouts/footer';
+import Navbar from './layouts/navbar';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -12,15 +13,15 @@ import AboutPage from './pages/AboutPage';
 function App() {
   return (
     <BrowserRouter>
+    <Navbar />
       <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="create" element={<CreateAnimationPage />} />
-          <Route path="gallery" element={<GalleryPage />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/create" element={<CreateAnimationPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/about" element={<AboutPage />} />
+        
       </Routes>
+      <Footer/>
     </BrowserRouter>
   );
 }

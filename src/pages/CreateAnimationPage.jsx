@@ -27,7 +27,7 @@ const CreateAnimationPage = () => {
   };
 
   return (
-    <div className="w-full text-center">
+    <div className="w-full h-full text-center">
       <div className="bg-gray-800 rounded-lg shadow-xl p-8 mb-8">
         <h1 className="text-3xl font-bold mb-2">Create Animation</h1>
         <p className="text-gray-300 mb-6">
