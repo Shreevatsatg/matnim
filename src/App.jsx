@@ -4,6 +4,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import BaseLayout from './layouts/baselayout';
 
+//sroll to top component
+import ScrollToTop from './components/ScrollToTop';
+
 // Pages
 import HomePage from './pages/HomePage';
 import GalleryPage from './pages/GalleryPage';
@@ -14,6 +17,8 @@ import LoginPage from './pages/loginpage'
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
+      {/* The BaseLayout will be applied to all routes */}
       <Routes>
         {/* Here we wrap each route with BaseLayout */}
         <Route path="/" element={<BaseLayout><HomePage/></BaseLayout>} />
