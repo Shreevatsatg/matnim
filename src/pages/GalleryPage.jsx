@@ -213,11 +213,8 @@ const GalleryPage = () => {
       <div className="relative z-10 px-6 py-20">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-white/5 backdrop-blur-lg rounded-full border border-white/10 mb-6">
-              <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
-              <span className="text-sm">Community Showcase</span>
-            </div>
+          <div className="text-center mt-10 mb-16">
+            
             
             <h1 className="text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight">
               <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500 bg-clip-text text-transparent">

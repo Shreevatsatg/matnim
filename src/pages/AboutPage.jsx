@@ -12,11 +12,8 @@ const AboutPage = () => {
 
       <div className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center px-4 py-2 bg-white/5 backdrop-blur-lg rounded-full border border-white/10 mb-8">
-            <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
-            <span className="text-sm">Empowering Mathematical Visualization</span>
-          </div>
+        <div className="text-center mb-16 mt-10">
+          
           <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tight">
             <span className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">About Matnim</span>
           </h1>

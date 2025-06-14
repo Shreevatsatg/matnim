@@ -76,10 +76,10 @@ const HomePage = () => {
           </div>
           
           <h1 className="text-6xl md:text-8xl font-black mb-8 leading-tight tracking-tight">
-            <span className="block bg-gradient-to-r from-blue-300 via-indigo-300 to-blue-500 bg-clip-text text-transparent animate-pulse">
+            <span className="block text-white  ">
               MATNIM 
             </span>
-            <span className="block text-white text-5xl">ANIMATIONS POWERED BY AI</span>
+            <span className="block bg-gradient-to-r from-blue-300 via-indigo-300 to-blue-500 bg-clip-text text-transparent text-5xl">ANIMATIONS POWERED BY AI</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">

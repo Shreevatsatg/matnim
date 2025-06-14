@@ -9,6 +9,8 @@ import HomePage from './pages/HomePage';
 import CreateAnimationPage from './pages/CreateAnimationPage';
 import GalleryPage from './pages/GalleryPage';
 import AboutPage from './pages/AboutPage';
+import PricingPage from './pages/PricingPage'
+import LoginPage from './pages/loginpage'
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/create" element={<BaseLayout><CreateAnimationPage/></BaseLayout>} />
         <Route path="/gallery" element={<BaseLayout><GalleryPage/></BaseLayout>} />
         <Route path="/about" element={<BaseLayout><AboutPage/></BaseLayout>} />
+        <Route path="/subscription" element={<BaseLayout><PricingPage/></BaseLayout>} />
+        <Route path='/login' element={<BaseLayout><LoginPage/></BaseLayout>} />
       </Routes>
     </BrowserRouter>
   );
