@@ -1,24 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Sparkles, Zap, Brain, Code, Video, ArrowRight, Github, Twitter, Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Sparkles, Zap, Brain, Code, Video, Github, Menu, X, Download, Link2, AlertCircle, Loader2, Wand2, Play } from 'lucide-react';
+
+// TextForm Component
+const TextForm = ({ onSubmit, isLoading }) => {
+  const [text, setText] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (text.trim()) {
+      onSubmit(text);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="relative">
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Describe your mathematical animation... e.g., 'Create a 3D visualization showing the derivative of x² with animated tangent lines'"
+          className="w-full h-32 px-6 py-4 bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+          disabled={isLoading}
+        />
+        <div className="absolute bottom-4 right-4">
+          <Wand2 className="w-5 h-5 text-gray-400" />
+        </div>
+      </div>
+      <button
+        type="submit"
+        disabled={isLoading || !text.trim()}
+        className="group w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+            Creating Animation...
+          </>
+        ) : (
+          <>
+            <Play className="w-5 h-5 mr-3" />
+            Generate Animation
+          </>
+        )}
+      </button>
+    </form>
+  );
+};
+
+// VideoPlayer Component
+const VideoPlayer = ({ videoUrl }) => {
+  return (
+    <div className="relative bg-black/50 rounded-xl overflow-hidden border border-white/10">
+      <video
+        src={videoUrl}
+        controls
+        className="w-full h-auto"
+        style={{ maxHeight: '500px' }}
+      >
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  );
+};
+
+// Mock service - replace with your actual service
+const createAnimation = async (text) => {
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  return {
+    videoUrl: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4'
+  };
+};
 
 const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentExample, setCurrentExample] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const examples = [
-    "Create a 3D visualization of calculus derivatives",
-    "Generate animated linear algebra transformations", 
-    "Build interactive physics simulations",
-    "Animate complex mathematical proofs"
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentExample((prev) => (prev + 1) % examples.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [error, setError] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const videoRef = useRef(null);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -27,6 +87,41 @@ const HomePage = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  const handleSubmit = async (text) => {
+    setLoading(true);
+    setError('');
+    setVideoUrl('');
+    setPrompt(text);
+
+    try {
+      const result = await createAnimation(text);
+      setVideoUrl(result.videoUrl);
+      // Scroll to video section after successful generation
+      if (videoRef.current) {
+        videoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to create animation');
+      console.error('Error creating animation:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin + videoUrl);
+      alert('Video URL copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
+  };
+
+  const closeVideo = () => {
+    setVideoUrl('');
+    setPrompt('');
+  };
 
   const features = [
     {
@@ -70,52 +165,94 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="relative z-10 px-6 py-20">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center px-4 py-2 bg-white/5 backdrop-blur-lg rounded-full border border-white/10 mb-8">
+          <div className="inline-flex items-center px-4 py-2 bg-white/5 backdrop-blur-lg rounded-full border border-white/10 mb-2">
             <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
             <span className="text-sm">Powered by Advanced AI Models</span>
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-black mb-8 leading-tight tracking-tight">
-            <span className="block text-white  ">
-              MATNIM 
-            </span>
+          <h1 className="text-6xl md:text-8xl font-black mb-12 leading-tight tracking-tight">
+            <span className="block text-white">MATNIM</span>
             <span className="block bg-gradient-to-r from-blue-300 via-indigo-300 to-blue-500 bg-clip-text text-transparent text-5xl">ANIMATIONS POWERED BY AI</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-300 mb-6 max-w-4xl mx-auto leading-relaxed">
             Transform complex mathematical concepts into stunning, professional-grade animations. 
-            Enterprise-level AI technology that delivers broadcast-quality results in seconds.
           </p>
 
-          {/* Animated typing effect */}
-          <div className="bg-slate-800/50 backdrop-blur-lg rounded-xl p-6 mb-10 max-w-2xl mx-auto border border-white/10">
-            <div className="flex items-center mb-4">
-              <div className="flex space-x-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          {/* Animation Form */}
+          <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-white/10 hover:border-blue-500/30 transition-all max-w-2xl mx-auto">
+            <TextForm onSubmit={handleSubmit} isLoading={loading} />
+            
+            {error && (
+              <div className="mt-6 p-4 bg-red-500/10 backdrop-blur-lg border border-red-500/30 rounded-xl text-red-300 animate-pulse">
+                <div className="flex items-center">
+                  <AlertCircle className="w-5 h-5 mr-3 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Error</p>
+                    <p className="text-sm">{error}</p>
+                  </div>
+                </div>
               </div>
-              <span className="ml-4 text-sm text-gray-400">AI Prompt</span>
-            </div>
-            <div className="text-left">
-              <span className="text-blue-400">$</span>
-              <span className="text-indigo-400 ml-2 font-mono">
-                {examples[currentExample]}
-                <span className="animate-pulse">|</span>
-              </span>
-            </div>
+            )}
+
+            {loading && (
+              <div className="mt-8 flex flex-col items-center justify-center py-8">
+                <div className="relative">
+                  <div className="w-16 h-16 border-4 border-blue-500/30 rounded-full animate-spin border-t-blue-500"></div>
+                  <div className="absolute inset-0 w-16 h-16 border-4 border-transparent rounded-full animate-pulse border-t-indigo-500"></div>
+                </div>
+                <p className="mt-4 text-gray-300 text-lg">Creating your animation...</p>
+                <p className="text-gray-400 text-sm">This may take a few moments</p>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <button className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-bold text-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center">
-              <Play className="w-6 h-6 mr-3" />
-              Start Creating Now
-              <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="px-10 py-5 bg-white/5 backdrop-blur-lg rounded-xl font-bold text-xl hover:bg-white/10 transition-all border border-white/10 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/20">
-              Watch Demo
-            </button>
-          </div>
+          {/* Video Results Section */}
+          {videoUrl && (
+            <div ref={videoRef} className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-blue-500/30 transition-all animate-fade-in max-w-4xl mx-auto relative">
+              <button
+                onClick={closeVideo}
+                className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-all"
+                aria-label="Close video"
+              >
+                <X className="w-5 h-5 text-gray-300" />
+              </button>
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                  Animation Ready!
+                </h2>
+                <p className="text-gray-300">Your mathematical visualization has been generated</p>
+              </div>
+
+              <VideoPlayer videoUrl={videoUrl} />
+              
+              <div className="mt-8 p-6 bg-slate-800/50 backdrop-blur-lg rounded-xl border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 flex items-center">
+                  <Wand2 className="w-5 h-5 mr-2 text-blue-400" />
+                  Your Prompt
+                </h3>
+                <p className="text-gray-300 italic leading-relaxed">"{prompt}"</p>
+              </div>
+              
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href={videoUrl}
+                  download
+                  className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center justify-center"
+                >
+                  <Download className="w-5 h-5 mr-3" />
+                  Download Video
+                </a>
+                <button
+                  onClick={copyToClipboard}
+                  className="px-8 py-4 bg-white/5 backdrop-blur-lg rounded-xl font-bold text-lg hover:bg-white/10 transition-all border border-white/10 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/20 flex items-center justify-center"
+                >
+                  <Link2 className="w-5 h-5 mr-3" />
+                  Copy Link
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

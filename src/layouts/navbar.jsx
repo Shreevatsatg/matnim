@@ -59,17 +59,11 @@ export default function Navbar() {
             >
               Pricing
             </Link>
-            <Link
-              to="/create"
-              className="ml-2 flex items-center px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg font-bold text-sm text-white hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
-            >
-              Get Started<ArrowRight className="w-3 h-3 ml-3 group-hover:translate-x-1 transition-transform" />
-              
-            </Link>
+            
             {/* CTA Buttons */}
             <Link
               to="/login"
-              className="ml-4 px-6 py-2 rounded-lg font-bold text-sm text-white border border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+              className="ml-2  px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg font-bold text-sm text-white hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
             >
               Log In
             </Link>

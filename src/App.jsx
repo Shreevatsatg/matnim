@@ -6,7 +6,6 @@ import BaseLayout from './layouts/baselayout';
 
 // Pages
 import HomePage from './pages/HomePage';
-import CreateAnimationPage from './pages/CreateAnimationPage';
 import GalleryPage from './pages/GalleryPage';
 import AboutPage from './pages/AboutPage';
 import PricingPage from './pages/PricingPage'
@@ -18,7 +17,6 @@ function App() {
       <Routes>
         {/* Here we wrap each route with BaseLayout */}
         <Route path="/" element={<BaseLayout><HomePage/></BaseLayout>} />
-        <Route path="/create" element={<BaseLayout><CreateAnimationPage/></BaseLayout>} />
         <Route path="/gallery" element={<BaseLayout><GalleryPage/></BaseLayout>} />
         <Route path="/about" element={<BaseLayout><AboutPage/></BaseLayout>} />
         <Route path="/subscription" element={<BaseLayout><PricingPage/></BaseLayout>} />
