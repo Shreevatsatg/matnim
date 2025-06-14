@@ -1,97 +1,177 @@
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Play, Sparkles, Zap, Brain, Code, Video, ArrowRight, Github, Twitter, Menu, X } from 'lucide-react';
 
 const HomePage = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentExample, setCurrentExample] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const examples = [
+    "Create a 3D visualization of calculus derivatives",
+    "Generate animated linear algebra transformations", 
+    "Build interactive physics simulations",
+    "Animate complex mathematical proofs"
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentExample((prev) => (prev + 1) % examples.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const features = [
+    {
+      icon: <Brain className="w-6 h-6" />,
+      title: "AI-Powered Generation",
+      description: "Describe your mathematical concept in plain English and watch AI create stunning visualizations"
+    },
+    {
+      icon: <Code className="w-6 h-6" />,
+      title: "No Code Required",
+      description: "Generate complex Manim animations without writing a single line of Python code"
+    },
+    {
+      icon: <Video className="w-6 h-6" />,
+      title: "Export Ready",
+      description: "Download high-quality MP4 videos perfect for education, presentations, or social media"
+    },
+    {
+      icon: <Zap className="w-6 h-6" />,
+      title: "Lightning Fast",
+      description: "Advanced AI models generate animations in seconds, not hours of manual coding"
+    }
+  ];
+
   return (
-    <div className="text-center w-full">
-      <div className="py-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl mb-6">
-          <span className="block text-indigo-500">matnim</span>
-          <span className="block text-white">Bring Math to Life</span>
-        </h1>
-        <p className="mt-6 max-w-lg mx-auto text-xl text-gray-300">
-          Create beautiful mathematical animations with natural language using Manim and AI.
-        </p>
-        <div className="mt-10 flex justify-center">
-          <Link
-            to="/create"
-            className="px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
-          >
-            Get Started
-          </Link>
-          <Link
-            to="/gallery"
-            className="ml-4 px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-gray-800 hover:bg-gray-700 md:py-4 md:text-lg md:px-10"
-          >
-            View Gallery
-          </Link>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white overflow-hidden relative">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div 
+          className="absolute w-96 h-96 bg-blue-500/8 rounded-full blur-3xl animate-pulse"
+          style={{
+            left: mousePosition.x / 10,
+            top: mousePosition.y / 10,
+            transform: 'translate(-50%, -50%)'
+          }}
+        />
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-blue-400/6 rounded-full blur-2xl animate-bounce" />
+        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-indigo-500/8 rounded-full blur-3xl animate-pulse" />
       </div>
 
+      {/* Hero Section */}
+      <section className="relative z-10 px-6 py-20">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="inline-flex items-center px-4 py-2 bg-white/5 backdrop-blur-lg rounded-full border border-white/10 mb-8">
+            <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
+            <span className="text-sm">Powered by Advanced AI Models</span>
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-black mb-8 leading-tight tracking-tight">
+            <span className="block bg-gradient-to-r from-blue-300 via-indigo-300 to-blue-500 bg-clip-text text-transparent animate-pulse">
+              MATNIM 
+            </span>
+            <span className="block text-white text-5xl">ANIMATIONS POWERED BY AI</span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+            Transform complex mathematical concepts into stunning, professional-grade animations. 
+            Enterprise-level AI technology that delivers broadcast-quality results in seconds.
+          </p>
+
+          {/* Animated typing effect */}
+          <div className="bg-slate-800/50 backdrop-blur-lg rounded-xl p-6 mb-10 max-w-2xl mx-auto border border-white/10">
+            <div className="flex items-center mb-4">
+              <div className="flex space-x-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              </div>
+              <span className="ml-4 text-sm text-gray-400">AI Prompt</span>
+            </div>
+            <div className="text-left">
+              <span className="text-blue-400">$</span>
+              <span className="text-indigo-400 ml-2 font-mono">
+                {examples[currentExample]}
+                <span className="animate-pulse">|</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <button className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-bold text-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center">
+              <Play className="w-6 h-6 mr-3" />
+              Start Creating Now
+              <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button className="px-10 py-5 bg-white/5 backdrop-blur-lg rounded-xl font-bold text-xl hover:bg-white/10 transition-all border border-white/10 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/20">
+              Watch Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <div className="py-12 bg-gray-800 rounded-lg mt-12 w-full">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">
-            Features
-          </h2>
-          <div className="mt-10">
-            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="pt-6">
-                <div className="flow-root bg-gray-700 rounded-lg px-6 pb-8">
-                  <div className="-mt-6">
-                    <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                        </svg>
-                      </span>
-                    </div>
-                    <h3 className="mt-8 text-lg font-medium text-white tracking-tight">Natural Language Input</h3>
-                    <p className="mt-5 text-base text-gray-300">
-                      Describe what you want to see and let AI generate the Manim code for you.
-                    </p>
-                  </div>
-                </div>
-              </div>
+      <section id="features" className="relative z-10 px-6 py-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
+              Why Choose <span className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">ManimAI Pro</span>?
+            </h2>
+            <p className="text-xl text-gray-300">Enterprise-grade mathematical visualization through cutting-edge artificial intelligence</p>
+          </div>
 
-              <div className="pt-6">
-                <div className="flow-root bg-gray-700 rounded-lg px-6 pb-8">
-                  <div className="-mt-6">
-                    <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
-                      </span>
-                    </div>
-                    <h3 className="mt-8 text-lg font-medium text-white tracking-tight">Beautiful Animations</h3>
-                    <p className="mt-5 text-base text-gray-300">
-                      Create professional-quality mathematical animations powered by Manim.
-                    </p>
-                  </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <div 
+                key={index}
+                className="group bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-blue-500/50 transition-all hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
+              >
+                <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  {feature.icon}
                 </div>
+                <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
+                <p className="text-gray-300 leading-relaxed">{feature.description}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              <div className="pt-6">
-                <div className="flow-root bg-gray-700 rounded-lg px-6 pb-8">
-                  <div className="-mt-6">
-                    <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </span>
-                    </div>
-                    <h3 className="mt-8 text-lg font-medium text-white tracking-tight">Save & Share</h3>
-                    <p className="mt-5 text-base text-gray-300">
-                      Download your animations or share them directly with others.
-                    </p>
-                  </div>
-                </div>
-              </div>
+      {/* CTA Section */}
+      <section className="relative z-10 px-6 py-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 backdrop-blur-lg rounded-3xl p-16 border border-white/10">
+            <h2 className="text-5xl md:text-7xl font-black mb-8 tracking-tight">
+              READY TO TRANSFORM YOUR 
+              <span className="block bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                MATHEMATICAL STORYTELLING?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Join thousands of professionals, educators, and researchers who trust our enterprise-grade AI 
+              to deliver stunning mathematical visualizations that captivate and educate.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <button className="px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-bold text-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30">
+                Start Free Trial
+              </button>
+              <button className="px-10 py-5 bg-white/5 backdrop-blur-lg rounded-xl font-bold text-xl hover:bg-white/10 transition-all border border-white/10 hover:border-blue-500/50 flex items-center justify-center hover:shadow-lg hover:shadow-blue-500/20">
+                <Github className="w-6 h-6 mr-3" />
+                View Documentation
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
