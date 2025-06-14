@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Layouts
 
-import BaseLayout from './layouts/baselayout';
+import BaseLayout from './layouts/BaseLayout';
 
 //sroll to top component
 import ScrollToTop from './components/ScrollToTop';

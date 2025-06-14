@@ -1,7 +1,7 @@
 // src/components/BaseLayout.jsx
 import React from "react";
-import Navbar from "./navbar";
-import Footer from "./footer";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 function BaseLayout({ children }) {
   return (
