@@ -33,7 +33,7 @@ export default function Footer() {
 
             {/* Navigation Links */}
             <div className="text-center">
-              <h4 className="text-lg font-semibold mb-4 text-gray-200 bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+              <h4 className="text-lg font-semibold mb-4  bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
                 Explore
               </h4>
               <ul className="space-y-3 text-gray-300 text-sm">
@@ -74,7 +74,7 @@ export default function Footer() {
 
             {/* Resources */}
             <div className="text-center">
-              <h4 className="text-lg font-semibold mb-4 text-gray-200 bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+              <h4 className="text-lg font-semibold mb-4  bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
                 Resources
               </h4>
               <ul className="space-y-3 text-gray-300 text-sm">
@@ -115,7 +115,7 @@ export default function Footer() {
 
             {/* Newsletter Signup */}
             <div className="text-center md:text-left">
-              <h4 className="text-lg font-semibold mb-4 text-gray-200 bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+              <h4 className="text-lg font-semibold mb-4  bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
                 Stay Connected
               </h4>
               <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2 mb-4">
