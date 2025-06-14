@@ -9,7 +9,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0">
-                <span className="text-2xl font-bold text-indigo-500 hover:text-3xl">Visualixir</span>
+                <span className="text-2xl font-bold text-indigo-500 hover:text-3xl">matnim</span>
               </Link>
             </div>
             <div className="flex">

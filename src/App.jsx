@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Layouts
-import Footer from './layouts/footer';
-import Navbar from './layouts/navbar';
+
+import BaseLayout from './layouts/baselayout';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -13,15 +13,13 @@ import AboutPage from './pages/AboutPage';
 function App() {
   return (
     <BrowserRouter>
-    <Navbar />
       <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/create" element={<CreateAnimationPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/about" element={<AboutPage />} />
-        
+        {/* Here we wrap each route with BaseLayout */}
+        <Route path="/" element={<BaseLayout><HomePage/></BaseLayout>} />
+        <Route path="/create" element={<BaseLayout><CreateAnimationPage/></BaseLayout>} />
+        <Route path="/gallery" element={<BaseLayout><GalleryPage/></BaseLayout>} />
+        <Route path="/about" element={<BaseLayout><AboutPage/></BaseLayout>} />
       </Routes>
-      <Footer/>
     </BrowserRouter>
   );
 }
