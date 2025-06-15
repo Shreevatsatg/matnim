@@ -6,7 +6,6 @@ const GalleryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [hoveredCard, setHoveredCard] = useState(null);
 
   // Enhanced demo data with more realistic content
   const demoAnimations = [
@@ -135,7 +134,7 @@ const GalleryPage = () => {
     };
 
     fetchAnimations();
-  }, []);
+  },);
 
   const handleShare = (animation) => {
     if (navigator.share) {
@@ -235,8 +234,7 @@ const GalleryPage = () => {
               <div 
                 key={animation.id} 
                 className="group bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden shadow-lg border border-white/10 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20"
-                onMouseEnter={() => setHoveredCard(animation.id)}
-                onMouseLeave={() => setHoveredCard(null)}
+                
               >
                 <div className="relative overflow-hidden">
                   <img 
