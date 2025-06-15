@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const createAnimation = async (prompt) => {
   try {
-    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/animations`, {
+    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/animation`, {
       prompt: prompt,
     }, {
       headers: {
