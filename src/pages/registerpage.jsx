@@ -1,50 +1,74 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { signup } from '../services/signup';
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // Add this import
-import { signin } from '../services/signin';
 
-const LoginPage = () => {
+const RegisterPage = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // Add loading state
-  
-  const navigate = useNavigate(); // Initialize navigate hook
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
       return;
     }
     
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+    
+    if (!termsAccepted) {
+      setError('Please accept the Terms of Service and Privacy Policy');
+      return;
+    }
+    
     setError('');
+    setSuccess('');
     setLoading(true);
     
     try {
-      const response = await signin(email, password);
+      const response = await signup(email, name, password);
       
-      // Optional: Store user data or token if needed
-      // localStorage.setItem('token', response.token);
+      setSuccess('Account created successfully! Redirecting to login...');
+      
+      // Optional: Store user data if needed
       // localStorage.setItem('user', JSON.stringify(response.user));
       
-      // Redirect to home page on successful login
-      navigate('/');
+      // Redirect to login page or home page after successful registration
+      setTimeout(() => {
+        navigate('/login'); // or navigate('/') if you want to auto-login
+      }, 2000);
       
     } catch (err) {
-      setError(err.message || 'Failed to login');
-      console.error('Login error:', err);
+      setError(err.message || 'Failed to create user');
+      console.error('Error creating user:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSocialLogin = (provider) => {
-    // Handle social login logic here (e.g., OAuth flow)
-    console.log(`Initiating ${provider} login`);
+  const handleSocialSignup = async (provider) => {
+    // Handle social signup logic here (e.g., OAuth flow)
+    console.log(`Initiating ${provider} signup`);
+    setError('Social signup not yet implemented');
   };
 
   return (
@@ -57,18 +81,38 @@ const LoginPage = () => {
             </div>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Sign in to your account
+            Create your Matnim account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
-            Don't have an account?{' '}
-            <a href="/register" className="font-medium text-blue-400 hover:text-blue-300">
-              Sign up
-            </a>
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300">
+              Sign in
+            </Link>
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
+            <div>
+              <label htmlFor="name" className="sr-only">
+                Full Name
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  disabled={loading}
+                  className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-gray-600 placeholder-gray-400 text-white bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-50"
+                  placeholder="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+            </div>
             <div>
               <label htmlFor="email" className="sr-only">
                 Email address
@@ -99,11 +143,11 @@ const LoginPage = () => {
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                   disabled={loading}
                   className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-gray-600 placeholder-gray-400 text-white bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-50"
-                  placeholder="Password"
+                  placeholder="Password (min 8 characters)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -117,33 +161,69 @@ const LoginPage = () => {
                 </button>
               </div>
             </div>
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  id="confirm-password"
+                  name="confirm-password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  required
+                  disabled={loading}
+                  className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-gray-600 placeholder-gray-400 text-white bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-50"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  disabled={loading}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
           </div>
 
           {error && (
-            <p className="text-red-400 text-sm text-center">{error}</p>
+            <div className="bg-red-900/50 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                disabled={loading}
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
-                Remember me
-              </label>
+          {success && (
+            <div className="bg-green-900/50 border border-green-500 text-green-400 px-4 py-3 rounded-lg text-sm">
+              {success}
             </div>
+          )}
 
-            <div className="text-sm">
-              <a href="/forgot-password" className="font-medium text-blue-400 hover:text-blue-300">
-                Forgot your password?
-              </a>
-            </div>
+          <div className="flex items-start">
+            <input
+              id="terms"
+              name="terms"
+              type="checkbox"
+              required
+              disabled={loading}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700 mt-1"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+            />
+            <label htmlFor="terms" className="ml-2 block text-sm text-gray-300">
+              I agree to the{' '}
+              <Link to="/terms" className="text-blue-400 hover:text-blue-300 underline">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy" className="text-blue-400 hover:text-blue-300 underline">
+                Privacy Policy
+              </Link>
+            </label>
           </div>
 
           <div>
@@ -152,7 +232,7 @@ const LoginPage = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Creating Account...' : 'Sign up'}
             </button>
           </div>
         </form>
@@ -164,14 +244,14 @@ const LoginPage = () => {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-gray-800/80 text-gray-400">
-                Or sign in with
+                Or sign up with
               </span>
             </div>
           </div>
 
           <div className="mt-6 grid grid-cols-3 gap-3">
             <button
-              onClick={() => handleSocialLogin('Google')}
+              onClick={() => handleSocialSignup('Google')}
               disabled={loading}
               className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700/50 hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
             >
@@ -182,7 +262,7 @@ const LoginPage = () => {
               />
             </button>
             <button
-              onClick={() => handleSocialLogin('Facebook')}
+              onClick={() => handleSocialSignup('Facebook')}
               disabled={loading}
               className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700/50 hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
             >
@@ -193,13 +273,13 @@ const LoginPage = () => {
               />
             </button>
             <button
-              onClick={() => handleSocialLogin('Apple')}
+              onClick={() => handleSocialSignup('Apple')}
               disabled={loading}
               className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700/50 hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
             >
               <img
                 className="h-5 w-5"
-                src="#"
+                src="https://www.svgrepo.com/show/475632/apple-color.svg"
                 alt="Apple"
               />
             </button>
@@ -210,4 +290,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

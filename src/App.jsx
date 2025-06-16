@@ -12,7 +12,9 @@ import HomePage from './pages/HomePage';
 import GalleryPage from './pages/GalleryPage';
 import AboutPage from './pages/AboutPage';
 import PricingPage from './pages/PricingPage'
-import LoginPage from './pages/loginpage'
+import RegisterPage from './pages/registerpage'
+import Loginpage from './pages/loginpage'
+import ForgotPassword from './pages/forgot-passwordpage'
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
         <Route path="/gallery" element={<BaseLayout><GalleryPage/></BaseLayout>} />
         <Route path="/about" element={<BaseLayout><AboutPage/></BaseLayout>} />
         <Route path="/subscription" element={<BaseLayout><PricingPage/></BaseLayout>} />
-        <Route path='/login' element={<BaseLayout><LoginPage/></BaseLayout>} />
+        <Route path='/register' element={<BaseLayout><RegisterPage/></BaseLayout>} />
+        <Route path='/login' element={<BaseLayout><Loginpage/></BaseLayout>}/>
+        <Route path='/forgot-password' element={<BaseLayout><ForgotPassword/></BaseLayout>}/>
       </Routes>
     </BrowserRouter>
   );
