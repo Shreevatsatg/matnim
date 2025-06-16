@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Share2, Clock, Sparkles, ChevronLeft, ChevronRight, Heart, Eye, Download } from 'lucide-react';
-import demoService from '../services/demoservice';
-
+import { Play, Share2, Clock, Heart } from 'lucide-react';
+import { demoService } from '../services/demoservice';
+import axios from 'axios';
 
 const GalleryPage = () => {
   const [animations, setAnimations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalAnimations, setTotalAnimations] = useState(0);
+  const [playingVideo, setPlayingVideo] = useState(null);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -21,28 +19,16 @@ const GalleryPage = () => {
   }, []);
 
   useEffect(() => {
-    fetchAnimations(currentPage);
-  }, [currentPage]);
+    fetchAnimations();
+  }, []);
 
-  const fetchAnimations = async (page = 1) => {
+  const fetchAnimations = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await demoService.getAllAnimations(page, 9);
-      
-      // Assuming your backend returns data in this format:
-      // {
-      //   animations: [...],
-      //   currentPage: 1,
-      //   totalPages: 5,
-      //   totalCount: 45
-      // }
-      
-      setAnimations(response.animations || response.data || response);
-      setCurrentPage(response.currentPage || page);
-      setTotalPages(response.totalPages || 1);
-      setTotalAnimations(response.totalCount || response.total || 0);
+      const data = await demoService();
+      setAnimations(data);
       
     } catch (err) {
       setError(err.message || 'Failed to load animations');
@@ -57,45 +43,31 @@ const GalleryPage = () => {
       navigator.share({
         title: animation.title,
         text: animation.description,
-        url: window.location.href + '/' + animation.id
+        url: window.location.href + '/' + animation._id
       });
     } else {
       // Fallback for browsers that don't support Web Share API
-      navigator.clipboard.writeText(window.location.href + '/' + animation.id);
+      navigator.clipboard.writeText(window.location.href + '/' + animation._id);
       alert('Link copied to clipboard!');
     }
   };
 
-  const handlePlay = async (animation) => {
-    try {
-      // Update views when animation is played
-      await demoService.updateViews(animation.id);
-      
-      // Update local state to reflect new view count
-      setAnimations(prev => 
-        prev.map(anim => 
-          anim.id === animation.id 
-            ? { ...anim, views: anim.views + 1 }
-            : anim
-        )
-      );
-      
-      // Handle video playback logic here
-      console.log('Playing animation:', animation.title);
-      
-    } catch (error) {
-      console.error('Error updating views:', error);
-    }
+  const handlePlay = (animation) => {
+    setPlayingVideo(animation);
+  };
+
+  const closeVideo = () => {
+    setPlayingVideo(null);
   };
 
   const handleLike = async (animation) => {
     try {
-      await demoService.updateLikes(animation.id, 'increment');
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/demo-videos/${animation._id}/like`);
       
       // Update local state to reflect new like count
       setAnimations(prev => 
         prev.map(anim => 
-          anim.id === animation.id 
+          anim._id === animation._id 
             ? { ...anim, likes: anim.likes + 1 }
             : anim
         )
@@ -106,10 +78,12 @@ const GalleryPage = () => {
     }
   };
 
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   if (loading) {
@@ -148,7 +122,7 @@ const GalleryPage = () => {
               <p className="text-xl font-medium mb-2">Oops! Something went wrong</p>
               <p className="text-sm mb-4">{error}</p>
               <button 
-                onClick={() => fetchAnimations(currentPage)}
+                onClick={fetchAnimations}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
               >
                 Try Again
@@ -176,6 +150,32 @@ const GalleryPage = () => {
         <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-indigo-500/8 rounded-full blur-3xl animate-pulse" />
       </div>
 
+      {/* Video Modal */}
+      {playingVideo && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative max-w-4xl w-full">
+            <button 
+              onClick={closeVideo}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 text-2xl"
+            >
+              ✕
+            </button>
+            <video 
+              src={playingVideo.videoUrl} 
+              controls 
+              autoPlay
+              className="w-full rounded-lg"
+            >
+              Your browser does not support the video tag.
+            </video>
+            <div className="mt-4 text-center">
+              <h3 className="text-xl font-bold text-white">{playingVideo.title}</h3>
+              <p className="text-gray-300 mt-2">{playingVideo.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main content */}
       <div className="relative z-10 px-6 py-20">
         <div className="max-w-7xl mx-auto">
@@ -193,18 +193,18 @@ const GalleryPage = () => {
               From elegant proofs to complex 3D transformations, explore the artistry of mathematics.
             </p>
             
-            {totalAnimations > 0 && (
+            {animations.length > 0 && (
               <p className="text-sm text-gray-400 mt-4">
-                Showing {animations.length} of {totalAnimations} animations
+                Showing {animations.length} animations
               </p>
             )}
           </div>
 
           {/* Gallery Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {animations.map((animation) => (
               <div 
-                key={animation.id} 
+                key={animation._id} 
                 className="group bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden shadow-lg border border-white/10 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20"
               >
                 <div className="relative overflow-hidden">
@@ -213,7 +213,7 @@ const GalleryPage = () => {
                     alt={animation.title}
                     className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
                     onError={(e) => {
-                      e.target.src = `https://via.placeholder.com/400x240/3B82F6/FFFFFF?text=${animation.videoUrl}`;
+                      e.target.src = `https://via.placeholder.com/400x240/3B82F6/FFFFFF?text=${encodeURIComponent(animation.title)}`;
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -232,23 +232,16 @@ const GalleryPage = () => {
                           <Share2 className="w-5 h-5" />
                         </button>
                       </div>
-                      <button className="p-3 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-full transition-all transform hover:scale-110">
-                        <Download className="w-5 h-5" />
-                      </button>
                     </div>
                   </div>
                   
-                  {/* Stats overlay */}
-                  <div className="absolute top-4 right-4 flex space-x-2">
-                    <div className="px-2 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-xs text-white flex items-center">
-                      <Eye className="w-3 h-3 mr-1" />
-                      {animation.views?.toLocaleString() || 0}
-                    </div>
+                  {/* Like button overlay */}
+                  <div className="absolute top-4 right-4">
                     <button 
                       onClick={() => handleLike(animation)}
-                      className="px-2 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-xs text-white flex items-center hover:bg-red-500/30 transition-colors"
+                      className="px-3 py-2 bg-black/50 backdrop-blur-sm rounded-lg text-xs text-white flex items-center hover:bg-red-500/50 transition-colors"
                     >
-                      <Heart className="w-3 h-3 mr-1" />
+                      <Heart className="w-4 h-4 mr-1" />
                       {animation.likes || 0}
                     </button>
                   </div>
@@ -265,7 +258,7 @@ const GalleryPage = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center text-xs text-gray-500">
                       <Clock className="w-3 h-3 mr-1" />
-                      {animation.createdAt}
+                      {formatDate(animation.createdAt)}
                     </div>
                     <div className="text-xs text-blue-400 font-medium">
                       by {animation.author}
@@ -276,61 +269,11 @@ const GalleryPage = () => {
             ))}
           </div>
 
-          {/* Enhanced Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center">
-              <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-2 border border-white/10">
-                <nav className="flex items-center space-x-2">
-                  <button 
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="p-3 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all hover:scale-105 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  
-                  {/* Page numbers */}
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-                    if (pageNum <= totalPages) {
-                      return (
-                        <button
-                          key={pageNum}
-                          onClick={() => handlePageChange(pageNum)}
-                          className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                            currentPage === pageNum
-                              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                              : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      );
-                    }
-                    return null;
-                  })}
-                  
-                  {totalPages > 5 && currentPage < totalPages - 2 && (
-                    <>
-                      <span className="px-2 text-gray-500">...</span>
-                      <button
-                        onClick={() => handlePageChange(totalPages)}
-                        className="px-4 py-3 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all"
-                      >
-                        {totalPages}
-                      </button>
-                    </>
-                  )}
-                  
-                  <button 
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="p-3 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all hover:scale-105 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </nav>
-              </div>
+          {/* Empty state */}
+          {animations.length === 0 && !loading && (
+            <div className="text-center py-20">
+              <p className="text-gray-400 text-xl">No animations found</p>
+              <p className="text-gray-500 text-sm mt-2">Check back later for new content!</p>
             </div>
           )}
         </div>
