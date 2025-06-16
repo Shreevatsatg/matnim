@@ -8,7 +8,7 @@ const signin = async (email, password) => {
     }, {
       headers: {
         'Content-Type': 'application/json',
-      },
+      },withCredentials: true
     });
     return response.data;
   } catch (error) {
