@@ -17,53 +17,54 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!name || !email || !password || !confirmPassword) {
-      setError('Please fill in all fields');
-      return;
-    }
-    
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
-      return;
-    }
-    
-    if (!termsAccepted) {
-      setError('Please accept the Terms of Service and Privacy Policy');
-      return;
-    }
-    
-    setError('');
-    setSuccess('');
-    setLoading(true);
-    
-    try {
-      const response = await signup(email, name, password);
-      
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!name || !email || !password || !confirmPassword) {
+    setError('Please fill in all fields');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    setError('Passwords do not match');
+    return;
+  }
+
+  if (password.length < 8) {
+    setError('Password must be at least 8 characters long');
+    return;
+  }
+
+  if (!termsAccepted) {
+    setError('Please accept the Terms of Service and Privacy Policy');
+    return;
+  }
+
+  setError('');
+  setSuccess('');
+  setLoading(true);
+
+  try {
+    // Call the signup function
+    const result = await signup(email, name, password);
+
+    if (result.error) {
+      setError(result.error);
+    } else {
       setSuccess('Account created successfully! Redirecting to login...');
-      
-      // Optional: Store user data if needed
-      // localStorage.setItem('user', JSON.stringify(response.user));
-      
-      // Redirect to login page or home page after successful registration
       setTimeout(() => {
         navigate('/login'); // or navigate('/') if you want to auto-login
       }, 2000);
-      
-    } catch (err) {
-      setError(err.message || 'Failed to create user');
-      console.error('Error creating user:', err);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err) {
+    setError(err.message || 'Failed to create user');
+    console.error('Error creating user!', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   const handleSocialSignup = async (provider) => {
     // Handle social signup logic here (e.g., OAuth flow)

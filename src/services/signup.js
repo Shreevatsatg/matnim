@@ -2,18 +2,19 @@ import axios from 'axios';
 
 const signup = async (email, name, password) => {
   try {
-    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user`, {
-      email,
-      name,
-      password
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-      }, withCredentials: true,
-    });
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/user`,
+      { email, name, password },
+      { withCredentials: true }
+    );
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to create user');
+    if (error.response && error.response.status === 409) {
+      // Email already exists
+      return { error: "This email is already registered. Please use another email." };
+    } else {
+      return { error: "Failed to create user. Please try again." };
+    }
   }
 };
 
