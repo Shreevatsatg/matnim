@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // Add this import
+import { useLocation, useNavigate } from 'react-router-dom'; // Add this import
 import { signin } from '../services/signin';
+import { useAuth } from '../context/authcontext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -9,43 +10,40 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // Add loading state
-  
-  const navigate = useNavigate(); // Initialize navigate hook
+  const [loading, setLoading] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields.");
       return;
     }
-    
+
     setError('');
     setLoading(true);
-    
+
     try {
-      const response = await signin(email, password);
-      
-      // Optional: Store user data or token if needed
-      // localStorage.setItem('token', response.token);
-      // localStorage.setItem('user', JSON.stringify(response.user));
-      
-      // Redirect to home page on successful login
-      navigate('/');
-      
-    } catch (err) {
-      setError(err.message || 'Failed to login');
-      console.error('Login error:', err);
+  await signin(email, password);
+  await refreshAuth(); // <-- Add this line
+  const from = location.state?.from?.pathname || "/";
+  navigate(from);
+} catch (err) {
+      setError(err.message || "Failed to login.");
+      console.error("Login error.", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleSocialLogin = (provider) => {
-    // Handle social login logic here (e.g., OAuth flow)
-    console.log(`Initiating ${provider} login`);
+    console.log(`Initiating ${provider} login.`);
   };
+    
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/authcontext";
 import { Sparkles, Menu, X, Play, ArrowRight } from "lucide-react";
+
+import {Logout} from"../services/logoutservice";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+   const { isAuthenticated, setIsAuthenticated  } = useAuth();
+   const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +21,19 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogout = async () => {
+  try {
+    const isLogout = await Logout();
+    if (isLogout) {
+      setIsAuthenticated(false);
+      navigate('/login'); // Redirect after logging out
+    }
+  } catch (err) {
+    console.error("Logout error.", err);
+  }
+};
+  
 
   return (
     <nav
@@ -60,13 +79,23 @@ export default function Navbar() {
               Pricing
             </Link>
             
-            {/* CTA Buttons */}
-            <Link
+            {!isAuthenticated &&<Link
               to="/login"
               className="ml-2  px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg font-bold text-sm text-white hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
             >
               Log In
-            </Link>
+            </Link>}
+
+            {isAuthenticated &&<button
+            onClick={handleLogout}
+              className="ml-2  px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg font-bold text-sm text-white hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+            >
+              Log out
+            </button>}
+
+
+
+
           </div>
 
           {/* Mobile menu button */}

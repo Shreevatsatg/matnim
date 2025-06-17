@@ -1,38 +1,54 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// Layouts
+import BaseLayout from "./layouts/BaseLayout";
+import ScrollToTop from "./components/ScrollToTop";
 
-import BaseLayout from './layouts/BaseLayout';
+import HomePage from "./pages/HomePage";
+import GalleryPage from "./pages/GalleryPage";
+import AboutPage from "./pages/AboutPage";
+import PricingPage from "./pages/PricingPage";
+import RegisterPage from "./pages/registerpage";
+import Loginpage from "./pages/Loginpage";
+import ForgotPassword from "./pages/forgot-passwordpage";
 
-//sroll to top component
-import ScrollToTop from './components/ScrollToTop';
+import PrivateRoute from "./components/privateroute";
 
-// Pages
-import HomePage from './pages/HomePage';
-import GalleryPage from './pages/GalleryPage';
-import AboutPage from './pages/AboutPage';
-import PricingPage from './pages/PricingPage'
-import RegisterPage from './pages/registerpage'
-import Loginpage from './pages/loginpage'
-import ForgotPassword from './pages/forgot-passwordpage'
+import { AuthProvider } from "./context/authcontext";
 
-function App() {
+function AppContent() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      {/* The BaseLayout will be applied to all routes */}
+
       <Routes>
-        {/* Here we wrap each route with BaseLayout */}
         <Route path="/" element={<BaseLayout><HomePage/></BaseLayout>} />
-        <Route path="/gallery" element={<BaseLayout><GalleryPage/></BaseLayout>} />
         <Route path="/about" element={<BaseLayout><AboutPage/></BaseLayout>} />
         <Route path="/subscription" element={<BaseLayout><PricingPage/></BaseLayout>} />
-        <Route path='/register' element={<BaseLayout><RegisterPage/></BaseLayout>} />
-        <Route path='/login' element={<BaseLayout><Loginpage/></BaseLayout>}/>
-        <Route path='/forgot-password' element={<BaseLayout><ForgotPassword/></BaseLayout>}/>
+
+        {/* Protected route */}
+        <Route
+          path="/gallery"
+          element={
+            <PrivateRoute>
+              <BaseLayout><GalleryPage/></BaseLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/register" element={<BaseLayout><RegisterPage/></BaseLayout>} />
+        <Route path="/login" element={<BaseLayout><Loginpage/></BaseLayout>} />
+        <Route path="/forgot-password" element={<BaseLayout><ForgotPassword/></BaseLayout>} />
       </Routes>
     </BrowserRouter>
-  );
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  )
 }
 
 export default App;
