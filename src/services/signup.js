@@ -10,7 +10,6 @@ const signup = async (email, name, password) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 409) {
-      // Email already exists
       return { error: "This email is already registered. Please use another email." };
     } else {
       return { error: "Failed to create user. Please try again." };

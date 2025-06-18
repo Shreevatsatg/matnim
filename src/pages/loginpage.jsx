@@ -65,7 +65,7 @@ const LoginPage = () => {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6 mb-2" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -161,13 +161,13 @@ const LoginPage = () => {
               <div className="w-full border-t border-gray-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-800/80 text-gray-400">
+              <span className="px-2 bg-gray-800/80 text-gray-400 rounded-2xl">
                 Or sign in with
               </span>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-3 gap-3">
+          <div className="mt-2">
             <button
               onClick={() => handleSocialLogin('Google')}
               disabled={loading}
@@ -177,28 +177,6 @@ const LoginPage = () => {
                 className="h-5 w-5"
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
                 alt="Google"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialLogin('Facebook')}
-              disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700/50 hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
-            >
-              <img
-                className="h-5 w-5"
-                src="https://www.svgrepo.com/show/475647/facebook-color.svg"
-                alt="Facebook"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialLogin('Apple')}
-              disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700/50 hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
-            >
-              <img
-                className="h-5 w-5"
-                src="#"
-                alt="Apple"
               />
             </button>
           </div>

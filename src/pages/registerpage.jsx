@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { signup } from '../services/signup';
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../context/authcontext';
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -16,6 +17,8 @@ const RegisterPage = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const { refreshAuth } = useAuth();
 
  const handleSubmit = async (e) => {
   e.preventDefault();
@@ -47,14 +50,14 @@ const RegisterPage = () => {
   try {
     // Call the signup function
     const result = await signup(email, name, password);
-
     if (result.error) {
       setError(result.error);
     } else {
       setSuccess('Account created successfully! Redirecting to login...');
-      setTimeout(() => {
-        navigate('/login'); // or navigate('/') if you want to auto-login
-      }, 2000);
+      await refreshAuth(); // <-- Add this line
+      const from = location.state?.from?.pathname || "/";
+      navigate(from);
+
     }
   } catch (err) {
     setError(err.message || 'Failed to create user');
@@ -73,7 +76,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 mt-10">
       <div className="max-w-md w-full space-y-8 bg-gray-800/80 backdrop-blur-lg p-8 rounded-xl shadow-2xl shadow-blue-500/20 border border-white/10">
         <div>
           <div className="flex justify-center">
@@ -92,7 +95,7 @@ const RegisterPage = () => {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6 mb-2" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
               <label htmlFor="name" className="sr-only">
@@ -238,19 +241,19 @@ const RegisterPage = () => {
           </div>
         </form>
 
-        <div className="mt-6">
+        <div className="mt-2">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-600" />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-800/80 text-gray-400">
+            <div className="relative flex justify-center text-sm ">
+              <span className="px-2 bg-gray-800/80 text-gray-400 rounded-2xl">
                 Or sign up with
               </span>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-3 gap-3">
+          <div className="mt-2">
             <button
               onClick={() => handleSocialSignup('Google')}
               disabled={loading}
@@ -260,28 +263,6 @@ const RegisterPage = () => {
                 className="h-5 w-5"
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
                 alt="Google"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialSignup('Facebook')}
-              disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700/50 hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
-            >
-              <img
-                className="h-5 w-5"
-                src="https://www.svgrepo.com/show/475647/facebook-color.svg"
-                alt="Facebook"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialSignup('Apple')}
-              disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700/50 hover:bg-gray-600/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
-            >
-              <img
-                className="h-5 w-5"
-                src="https://www.svgrepo.com/show/475632/apple-color.svg"
-                alt="Apple"
               />
             </button>
           </div>
