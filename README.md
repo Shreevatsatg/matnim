@@ -1,79 +1,129 @@
 # Matnim
 
-Matnim is a web application for generating mathematical animations using AI and natural language prompts. It features a modern React + Vite + Tailwind CSS frontend and an Express.js backend API.
+Matnim is a full-stack web application that allows users to create and share animations.
 
-## Features
-- Generate mathematical animations from text prompts
-- Gallery of sample and user-generated animations
-- Responsive, modern UI with React Router
-- Pricing and About pages
-- User authentication (UI only)
+## Tech Stack
+
+**Client:**
+
+*   **Framework:** React
+*   **Bundler:** Vite
+*   **Styling:** Tailwind CSS
+*   **Routing:** React Router
+*   **HTTP Requests:** Axios
+*   **Linting:** ESLint
+
+**Server:**
+
+*   **Framework:** Express
+*   **Database:** MongoDB (with Mongoose)
+*   **Authentication:** JWT, bcryptjs
+*   **API:** Supabase, ImageKit, OpenAI
+*   **Logging:** Winston, Morgan
+*   **CORS:** cors middleware
+*   **Dev tools:** Nodemon
 
 ## Project Structure
+
+The project is divided into two main directories: `client` and `server`.
+
+*   **`client`:** Contains the frontend React application.
+*   **`server`:** Contains the backend Express application.
+
+### Client
+
+The `client` directory has the following structure:
+
 ```
-matnim/
-├── client/           # React frontend (Vite, Tailwind CSS)
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   │   └── ScrollToTop.jsx
-│   │   ├── layouts/
-│   │   │   ├── BaseLayout.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   └── Navbar.jsx
-│   │   ├── pages/
-│   │   │   ├── AboutPage.jsx
-│   │   │   ├── GalleryPage.jsx
-│   │   │   ├── HomePage.jsx
-│   │   │   ├── PricingPage.jsx
-│   │   │   └── loginpage.jsx
-│   │   ├── services/
-│   │   │   └── AnimationService.js
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   └── main.jsx
-│   ├── package.json
-│   ├── vite.config.js
-│   └── ...
-├── server/           # Express backend
-│   ├── public/
-│   │   └── VID-20240918-WA0006.mp4
-│   ├── index.js
-│   └── package.json
+client/
+├── src/
+│   ├── components/      # Reusable components
+│   ├── context/         # React context providers
+│   ├── layouts/         # Layout components (e.g., Navbar, Footer)
+│   ├── pages/           # Application pages
+│   └── services/        # Services for making API calls
+├── public/              # Public assets
+└── tailwind.config.js # Tailwind CSS configuration
+```
+
+### Server
+
+The `server` directory has the following structure:
+
+```
+server/
+├── middlwars/       # Express middleware
+├── models/          # Mongoose models
+├── routes/          # Express routes
+├── services/        # Business logic and services
+└── utils/           # Utility functions
 ```
 
 ## Getting Started
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn
+To get the project up and running, follow these steps:
 
-### 1. Start the Server
-```
-cd server
-npm install
-npm run dev
-```
-The server runs on [http://localhost:3000](http://localhost:3000) and serves a test video at `/VID-20240918-WA0006.mp4`.
+1.  **Clone the repository:**
 
-### 2. Start the Client
-```
-cd client
-npm install
-npm run dev
-```
-The client runs on [http://localhost:5173](http://localhost:5173) by default.
+    ```bash
+    git clone https://github.com/Shreevatsatg/matnim-server.git
+    ```
 
-> **Note:** Set the `VITE_SERVER_URL` environment variable in the client to point to your backend (default: `http://localhost:3000`).
+2.  **Install dependencies:**
 
-## Usage
-- Enter a math animation prompt on the homepage to generate an animation (demo returns a static video).
-- Browse the Gallery for sample animations.
-- Learn more on the About and Pricing pages.
+    ```bash
+    # Install client dependencies
+    cd client
+    npm install
 
-## Tech Stack
-- **Frontend:** React, Vite, Tailwind CSS, React Router
-- **Backend:** Express.js, CORS
+    # Install server dependencies
+    cd ../server
+    npm install
+    ```
 
----
-Feel free to contribute or customize for your needs!
+3.  **Set up environment variables:**
+
+    Create a `.env` file in both the `client` and `server` directories and add the necessary environment variables.
+
+4.  **Start the development servers:**
+
+    ```bash
+    # Start the client development server
+    cd client
+    npm run dev
+
+    # Start the server development server
+    cd ../server
+    npm run dev
+    ```
+
+## Frontend
+
+The frontend is a React application that uses React Router for routing. The application has the following pages:
+
+*   **Home:** The landing page of the application.
+*   **Gallery:** A gallery of animations created by users. This is a protected route.
+*   **About:** A page with information about the project.
+*   **Pricing:** A page with pricing information.
+*   **Register:** A page for users to create a new account.
+*   **Login:** A page for users to log in to their account.
+*   **Forgot Password:** A page for users to reset their password.
+
+The frontend uses an `AuthProvider` to manage authentication state. The `PrivateRoute` component is used to protect routes that require authentication.
+
+## Backend
+
+The backend is an Express application that uses MongoDB as the database. The application has the following API endpoints:
+
+*   **`POST /user/signup`:** Create a new user account.
+*   **`POST /user/login`:** Log in to a user account.
+*   **`GET /api/me`:** Get the currently logged-in user's information.
+*   **`GET /api/logout`:** Log out the currently logged-in user.
+*   **`GET /api/animation`:** Get a list of animations.
+*   **`GET /api/demo-videos`:** Get a list of demo videos. This is a protected route.
+
+The backend uses JWT for authentication. The `restricttologedinusersonly` middleware is used to protect routes that require authentication.
+
+## Authentication
+
+The application uses JWT for authentication. When a user logs in, a JWT is generated and stored in a cookie. The JWT is then sent with each subsequent request to the server. The server uses the JWT to identify the user and authorize access to protected routes.
